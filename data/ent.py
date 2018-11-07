@@ -5,6 +5,7 @@ import torch
 from torch.utils.data.dataset import Dataset
 from torchvision import transforms
 from sklearn.preprocessing import MultiLabelBinarizer
+from PIL import Image
 
 class ENTDataset(Dataset):
     def __init__(self, dir_path, img_path, transform=None):
