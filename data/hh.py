@@ -21,7 +21,7 @@ class HHDataset(Dataset):
         img = img.convert('RGB')
         if self.transform is not None:
             img = self.transform(img)
-        label = torch.tensor(self.y[index], dtype=torch.float32).unsqueeze(1)
+        label = torch.tensor(self.y[index], dtype=torch.float32)
         return img, label
     
     def __len__(self):
