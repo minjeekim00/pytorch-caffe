@@ -27,6 +27,7 @@ class VGGCAM(nn.Module):
     def __init__(self, features, num_classes=1000, init_weights=True):
         super(VGGCAM, self).__init__()
         self.features = features
+        self.avgpool = nn.AvgPool2d(kernel_size=(14, 14)) # add avgpool layer
         self.classifier = nn.Sequential(
             nn.Linear(1024, num_classes),
         )
@@ -39,6 +40,7 @@ class VGGCAM(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
+        x = self.avgpool(x)
         x = x.view(x.size(0), -1)
         x = self.classifier(x)
         return x
@@ -71,8 +73,6 @@ def make_layers(cfg, batch_norm=False):
     for v in cfg:
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
-        elif v == 'A':
-            layers += [nn.AvgPool2d(kernel_size=(14, 14))]
         else:
             conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
             if batch_norm:
@@ -84,10 +84,10 @@ def make_layers(cfg, batch_norm=False):
 
 
 cfg = {
-    'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 1024, 'A'],
-    'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 1024, 'A'],
-    'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 1024, 'A'],
-    'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 1024, 'A'],
+    'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 1024],
+    'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 1024],
+    'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512, 512, 'M', 512, 512, 512, 1024],
+    'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 1024],
 }
 
 def remove_classifier_weight(model_url):
